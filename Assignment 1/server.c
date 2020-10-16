@@ -5,15 +5,19 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <pwd.h>
 #define PORT 8080
 int main(int argc, char const *argv[])
 {
     int server_fd, new_socket, valread;
     struct sockaddr_in address;
+    struct passwd* pwd;
+    pid_t pid;
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[102] = {0};
     char *hello = "Hello from server";
+    char *user = "nobody";
 
     printf("execve=0x%p\n", execve);
 
@@ -52,6 +56,13 @@ int main(int argc, char const *argv[])
     {
         perror("accept");
         exit(EXIT_FAILURE);
+    }
+    pid = fork();
+    if (pid > 0) {
+        if ((pwd = getpwnam(user)) == NULL) {
+            perror("Cannot find UID for nobody");
+        }
+        setuid(pwd->pw_uid);
     }
     valread = read( new_socket , buffer, 1024);
     printf("%s\n",buffer );
