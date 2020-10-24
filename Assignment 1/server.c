@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
     pid_t pid;
     int opt = 1;
     int addrlen = sizeof(address);
-    char buffer[2] = {0};
+    char buffer[1024] = {0};
     char *hello = "Hello from server";
     char *user = "nobody";
 
